@@ -57,7 +57,10 @@ android {
     consumerProguardFiles("consumer-proguard-rules.txt")
   }
 
-  buildTypes { release { isMinifyEnabled = false } }
+  buildTypes {
+    release { isMinifyEnabled = false }
+    debug { isMinifyEnabled = false }
+  }
 }
 
 dependencies {
