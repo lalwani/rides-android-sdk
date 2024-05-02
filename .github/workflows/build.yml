@@ -14,7 +14,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '8'
+          java-version: '11'
       - name: Lint and Unit tests
         run: ./gradlew check --stacktrace
       - name: Upload lint and test reports
@@ -40,7 +40,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '8'
+          java-version: '11'
       - name: Emulator tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
