@@ -18,6 +18,7 @@ package com.uber.sdk2.auth.internal
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import com.uber.sdk2.auth.AppDiscovering
 import com.uber.sdk2.auth.request.CrossApp
 
@@ -27,6 +28,7 @@ import com.uber.sdk2.auth.request.CrossApp
  */
 class AppDiscovery(val context: Context) : AppDiscovering {
   override fun findAppForSso(uri: Uri, appPriority: Iterable<CrossApp>): String? {
+    Log.d("yyyy", "SSO URI: ${uri.toString()}")
     val intent = Intent(Intent.ACTION_VIEW, uri)
 
     // Use PackageManager to find activities that can handle the Intent
