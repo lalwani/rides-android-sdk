@@ -38,6 +38,7 @@ plugins {
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.spotless)
+  alias(libs.plugins.mavenPublish)
 }
 
 tasks.withType<KotlinCompile>().configureEach {
