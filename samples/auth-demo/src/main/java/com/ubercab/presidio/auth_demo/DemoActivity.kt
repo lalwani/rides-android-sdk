@@ -23,7 +23,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -162,14 +164,24 @@ fun AuthScreen(
 
   Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
-      TextField(
-        value = selectedOptionText,
-        onValueChange = {},
-        label = { Text("Selected Option") },
-        modifier = Modifier.fillMaxWidth().menuAnchor(),
-        readOnly = true,
-        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-      )
+      Box(
+        modifier = Modifier
+          .fillMaxWidth()
+          .clickable { expanded = true }
+          .menuAnchor()
+          .padding(16.dp) // Optional: padding for better touch target
+      ) {
+        TextField(
+          value = selectedOptionText,
+          onValueChange = {},
+          label = { Text("Selected Option") },
+          modifier = Modifier.fillMaxWidth(),
+          readOnly = true,
+          trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+          singleLine = true,
+          enabled = false // Disable the TextField to prevent keyboard
+        )
+      }
 
       ExposedDropdownMenu(
         expanded = expanded,
