@@ -165,11 +165,11 @@ fun AuthScreen(
   Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
       Box(
-        modifier = Modifier
-          .fillMaxWidth()
-          .clickable { expanded = true }
-          .menuAnchor()
-          .padding(16.dp) // Optional: padding for better touch target
+        modifier =
+          Modifier.fillMaxWidth()
+            .clickable { expanded = true }
+            .menuAnchor()
+            .padding(16.dp) // Optional: padding for better touch target
       ) {
         TextField(
           value = selectedOptionText,
@@ -179,7 +179,7 @@ fun AuthScreen(
           readOnly = true,
           trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
           singleLine = true,
-          enabled = false // Disable the TextField to prevent keyboard
+          enabled = false, // Disable the TextField to prevent keyboard
         )
       }
 
