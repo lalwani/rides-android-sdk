@@ -52,6 +52,10 @@ tasks.dokkaHtmlMultiModule {
 
 val ktfmtVersion = libs.versions.ktfmt.get()
 
+group = "com.github.lalwani"
+
+version = "2.0.5"
+
 allprojects {
   apply(plugin = "com.diffplug.spotless")
   val spotlessFormatters: SpotlessExtension.() -> Unit = {

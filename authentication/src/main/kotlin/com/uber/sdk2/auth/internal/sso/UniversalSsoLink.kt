@@ -17,20 +17,19 @@ package com.uber.sdk2.auth.internal.sso
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatActivity.RESULT_CANCELED
 import androidx.appcompat.app.AppCompatActivity.RESULT_OK
-import com.uber.sdk2.auth.api.AppDiscovering
-import com.uber.sdk2.auth.api.exception.AuthException
-import com.uber.sdk2.auth.api.request.AuthContext
-import com.uber.sdk2.auth.api.request.AuthDestination
-import com.uber.sdk2.auth.api.request.SsoConfig
-import com.uber.sdk2.auth.api.sso.CustomTabsLauncher
-import com.uber.sdk2.auth.api.sso.SsoLink
+import com.uber.sdk2.auth.AppDiscovering
+import com.uber.sdk2.auth.exception.AuthException
+import com.uber.sdk2.auth.request.AuthContext
+import com.uber.sdk2.auth.request.AuthDestination
+import com.uber.sdk2.auth.request.SsoConfig
+import com.uber.sdk2.auth.sso.CustomTabsLauncher
+import com.uber.sdk2.auth.sso.SsoLink
 import com.uber.sdk2.core.config.UriConfig
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -68,15 +67,18 @@ internal class UniversalSsoLink(
   override suspend fun execute(optionalQueryParams: Map<String, String>): String {
     val uri =
       UriConfig.assembleUri(
-        ssoConfig.clientId,
-        RESPONSE_TYPE,
-        ssoConfig.redirectUri,
-        ssoConfig.scope,
-      )
-
-    optionalQueryParams.entries.forEach { entry ->
-      uri.buildUpon().appendQueryParameter(entry.key, entry.value).build()
-    }
+          ssoConfig.clientId,
+          RESPONSE_TYPE,
+          ssoConfig.redirectUri,
+          ssoConfig.scope,
+        )
+        .buildUpon()
+        .also { builder ->
+          optionalQueryParams.entries.forEach { entry ->
+            builder.appendQueryParameter(entry.key, entry.value)
+          }
+        }
+        .build()
     withContext(Dispatchers.Main) {
       when (authContext.authDestination) {
         is AuthDestination.CrossAppSso -> {
@@ -102,19 +104,13 @@ internal class UniversalSsoLink(
   private fun handleResult(result: ActivityResult): String {
     return when (result.resultCode) {
       RESULT_OK -> {
-        Log.d("xxxx", result.data?.getStringExtra("CODE_RECEIVED").orEmpty())
-        result.data?.let {
-          if (!it.getStringExtra("CODE_RECEIVED").isNullOrEmpty()) {
-            it.getStringExtra("CODE_RECEIVED").orEmpty()
-          } else if (!it.getStringExtra("EXTRA_ERROR").isNullOrEmpty()) {
-            throw AuthException.ClientError(it.getStringExtra("EXTRA_ERROR").orEmpty())
-          } else {
-            throw AuthException.ClientError(AuthException.EMPTY_RESPONSE)
-          }
+        result.data?.getStringExtra(EXTRA_CODE_RECEIVED)?.ifEmpty {
+          throw AuthException.ClientError(AuthException.AUTH_CODE_NOT_PRESENT)
         } ?: throw AuthException.ClientError(AuthException.NULL_RESPONSE)
       }
       RESULT_CANCELED -> {
-        throw AuthException.ClientError(AuthException.CANCELED)
+        result.data?.getStringExtra(EXTRA_ERROR)?.let { throw AuthException.ClientError(it) }
+          ?: throw AuthException.ClientError(AuthException.CANCELED)
       }
       else -> {
         // should never happen
@@ -130,5 +126,8 @@ internal class UniversalSsoLink(
   companion object {
     /** The response type constant for the SSO authentication. */
     internal const val RESPONSE_TYPE = "code"
+
+    private const val EXTRA_CODE_RECEIVED = "CODE_RECEIVED"
+    private const val EXTRA_ERROR = "ERROR"
   }
 }

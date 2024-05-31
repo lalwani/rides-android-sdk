@@ -62,6 +62,8 @@ object UriConfig {
       .appendQueryParameter(REDIRECT_PARAM, redirectUri)
       .appendQueryParameter(SCOPE_PARAM, scopes)
       .appendQueryParameter(SDK_VERSION_PARAM, BuildConfig.VERSION_NAME)
+      .appendQueryParameter(PLATFORM_PARAM, "android")
+      .appendQueryParameter(CODE_CHALLENGE_METHOD, CODE_CHALLENGE_METHOD_VAL)
     return builder.build()
   }
 
@@ -80,4 +82,6 @@ object UriConfig {
   const val SDK_VERSION_PARAM = "sdk_version"
   const val CODE_CHALLENGE_PARAM = "code_challenge"
   const val REQUEST_URI = "request_uri"
+  const val CODE_CHALLENGE_METHOD = "code_challenge_method"
+  const val CODE_CHALLENGE_METHOD_VAL = "S256"
 }

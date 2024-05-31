@@ -1,0 +1,5 @@
+{
+  "client_id": "YOUR_CLIENT_ID",
+  "redirect_uri": "YOUR_REDIRECT_URI",
+  "scope": "YOUR_SCOPE"
+}

@@ -16,15 +16,15 @@
 package com.uber.sdk2.auth.internal.sso
 
 import androidx.appcompat.app.AppCompatActivity
+import com.uber.sdk2.auth.AppDiscovering
 import com.uber.sdk2.auth.RobolectricTestBase
-import com.uber.sdk2.auth.api.AppDiscovering
-import com.uber.sdk2.auth.api.request.AuthContext
-import com.uber.sdk2.auth.api.request.AuthDestination
-import com.uber.sdk2.auth.api.request.AuthType
-import com.uber.sdk2.auth.api.request.CrossApp
-import com.uber.sdk2.auth.api.request.PrefillInfo
-import com.uber.sdk2.auth.api.request.SsoConfig
-import com.uber.sdk2.auth.api.sso.CustomTabsLauncher
+import com.uber.sdk2.auth.request.AuthContext
+import com.uber.sdk2.auth.request.AuthDestination
+import com.uber.sdk2.auth.request.AuthType
+import com.uber.sdk2.auth.request.CrossApp
+import com.uber.sdk2.auth.request.PrefillInfo
+import com.uber.sdk2.auth.request.SsoConfig
+import com.uber.sdk2.auth.sso.CustomTabsLauncher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -35,6 +35,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -130,5 +131,20 @@ class UniversalSsoLinkTest : RobolectricTestBase() {
 
       assertNotNull(result)
       assertEquals("authCode", result)
+    }
+
+  @Test
+  fun `execute when query params are provided and auth destination is InApp should updated the uri`() =
+    runTest(testDispatcher) {
+      universalSsoLink.resultDeferred.complete("SuccessResult")
+      whenever(appDiscovering.findAppForSso(any(), any())).thenReturn(null)
+      doNothing().whenever(customTabsLauncher).launch(any())
+
+      // Simulate calling execute and handle outcomes.
+      val result = universalSsoLink.execute(mapOf("param1" to "value1"))
+
+      assertNotNull(result)
+      assertEquals("SuccessResult", result)
+      verify(customTabsLauncher).launch(argThat { getQueryParameter("param1") == "value1" })
     }
 }
