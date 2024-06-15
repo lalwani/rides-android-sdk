@@ -2,4 +2,5 @@ jdk:
   - openjdk17
 install:
    - echo "Running a custom install command"
+   - chmod 755 gradlew
    - ./gradlew clean assemble publishToMavenLocal -x signMavenPublication
